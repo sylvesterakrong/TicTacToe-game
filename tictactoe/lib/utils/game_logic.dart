@@ -5,10 +5,13 @@ class Player {
 }
 
 class Game {
-  static final boardlength = 9;
+  static final boardlenth = 9;
   static final blocsize = 100.0;
 
   List<String>? board;
 
-  static List<String>? initGameBoard() => List.generate(boardlength, (index) =>Player.empty);
+  static List<String>? initGameBoard() =>
+      List.generate(boardlenth, (index) => Player.empty);
+
+      bool winner
 }
