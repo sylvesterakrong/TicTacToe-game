@@ -29,13 +29,15 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   String lastValue = "X";
   bool gameOver = false;
-  List<int> scoreboard = [0,0,0,0,0,0];
+  int turn = 0;
+  String result = "";
+
+  List<int> scoreboard = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   Game game = Game();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     game.board = Game.initGameBoard();
     //print(game.board);
@@ -53,6 +55,7 @@ class _GameScreenState extends State<GameScreen> {
             Text("It's $lastValue turn".toUpperCase(),
                 style: const TextStyle(color: Colors.white, fontSize: 58)),
             const SizedBox(height: 20.0),
+            // ignore: sized_box_for_whitespace
             Container(
               width: boardwidth,
               height: boardwidth,
@@ -66,17 +69,25 @@ class _GameScreenState extends State<GameScreen> {
                     onTap: gameOver
                         ? null
                         : () {
-                          if (game.board![index] =="") {
+                            if (game.board![index] == "") {
                               setState(() {
-                              game.board![index] = lastValue;
-                              if (lastValue == "X") {
-                                lastValue = "O";
-                              } else {
-                                lastValue = "X";
-                              }
-                            });
-                          }
-                          
+                                game.board![index] = lastValue;
+                                turn++;
+                                gameOver = game.winnerCheck(
+                                    lastValue, index, scoreboard, 3);
+                                if (gameOver) {
+                                  result = "$lastValue is the Winner";
+                                } else if (!gameOver && turn == 9) {
+                                  result = "It's a Draw!";
+                                  gameOver = true;
+                                }
+                                if (lastValue == "X") {
+                                  lastValue = "O";
+                                } else {
+                                  lastValue = "X";
+                                }
+                              });
+                            }
                           },
                     child: Container(
                       width: Game.blocsize,
@@ -101,11 +112,22 @@ class _GameScreenState extends State<GameScreen> {
                 }),
               ),
             ),
+            const SizedBox(
+              height: 25.0,
+            ),
+            Text(
+              result,
+              style: const TextStyle(color: Colors.white, fontSize: 54.0),
+            ),
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
                   game.board = Game.initGameBoard();
                   lastValue = "X";
+                  gameOver = false;
+                  turn = 0;
+                  result = "";
+                  scoreboard = [0, 0, 0, 0, 0, 0, 0, 0, 0];
                 });
               },
               icon: const Icon(Icons.replay),
